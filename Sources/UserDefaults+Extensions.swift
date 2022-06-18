@@ -39,14 +39,28 @@ extension UserDefaults {
     func fetchOptional<T: UserDefaultsSerializable>(_ key: String) -> T? {
         let fetched: Any?
 
-        if T.self == URL.self {
-            // Hack for URL, which is special
-            // See: http://dscoder.com/defaults.html
-            // Error: Could not cast value of type '_NSInlineData' to 'NSURL'
-            fetched = self.url(forKey: key)
-        } else {
-            fetched = self.object(forKey: key)
-        }
+		// to support command line arguments, some types need explicit getter methods
+		// otherwise, errors like "Could not cast value of type '__NSCFString' to 'NSNumber'." occur
+		// 
+		// but check first for the nil case
+		if self.object(forKey: key) == nil {
+			fetched = nil
+		} else {
+			switch T.self {
+			case is Bool.Type:
+				fetched = self.bool(forKey: key)
+			case is Int.Type:
+				fetched = self.integer(forKey: key)
+			case is Float.Type:
+				fetched = self.float(forKey: key)
+			case is Double.Type:
+				fetched = self.double(forKey: key)
+			case is URL.Type:
+				fetched = self.url(forKey: key)
+			default:
+				fetched = self.object(forKey: key)
+			}
+		}
 
         if fetched == nil {
             return nil

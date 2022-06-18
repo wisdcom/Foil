@@ -91,4 +91,18 @@ final class TestSettings: NSObject {
 
     @WrappedDefaultOptional(key: "userId", userDefaults: store)
     @objc dynamic var userId: String?
+
+	//
+
+	@WrappedDefaultOptional(key: "boolArg", userDefaults: store)
+	var boolArg: Bool?
+
+	@WrappedDefaultOptional(key: "intArg", userDefaults: store)
+	var intArg: Int?
+
+	@WrappedDefaultOptional(key: "floatArg", userDefaults: store)
+	var floatArg: Float?
+
+	@WrappedDefaultOptional(key: "doubleArg", userDefaults: store)
+	var doubleArg: Double?
 }
