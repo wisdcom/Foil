@@ -7,7 +7,7 @@ on:
   - workflow_dispatch
 
 env:
-  DEVELOPER_DIR: /Applications/Xcode_13.3.app/Contents/Developer
+  DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
 
 jobs:
   main:
@@ -24,7 +24,7 @@ jobs:
         run: ./scripts/build_docs.zsh
 
       - name: create pull request
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@v5
         with:
           commit-message: "[automated] generate docs"
           title: "[automated] generate docs"

@@ -20,22 +20,21 @@ import Foundation
 public struct WrappedDefaultOptional<T: UserDefaultsSerializable> {
     private let _userDefaults: UserDefaults
     private let _publisher: CurrentValueSubject<T?, Never>
+    private let _observer: ObserverTrampoline
 
     /// The key for the value in `UserDefaults`.
     public let key: String
 
-    /// The value retreived from `UserDefaults`, if any exists.
+    /// The value retrieved from `UserDefaults`, if any exists.
     public var wrappedValue: T? {
         get {
             self._userDefaults.fetchOptional(self.key)
         }
         set {
-            if let newValue = newValue {
+            if let newValue {
                 self._userDefaults.save(newValue, for: self.key)
-                self._publisher.send(newValue)
             } else {
                 self._userDefaults.delete(for: self.key)
-                self._publisher.send(nil)
             }
         }
     }
@@ -53,5 +52,8 @@ public struct WrappedDefaultOptional<T: UserDefaultsSerializable> {
         self.key = keyName
         self._userDefaults = userDefaults
         self._publisher = CurrentValueSubject<T?, Never>(userDefaults.fetchOptional(keyName))
+        self._observer = ObserverTrampoline(userDefaults: userDefaults, key: keyName) { [unowned _publisher] in
+            _publisher.send(userDefaults.fetchOptional(keyName))
+        }
     }
 }
